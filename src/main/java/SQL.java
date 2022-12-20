@@ -16,7 +16,7 @@ public class SQL {
 
     }
 
-    public void add(ArrayList<String> elem) throws SQLException {
+    public void add() throws SQLException {
         conection.createStatement();
         switch (table) {
             case ("экспонаты"): {
@@ -29,6 +29,7 @@ public class SQL {
                     ps.setString(5, elem.get(4));
                     ps.executeUpdate();
                 }
+                break;
             }
             case ("пользователь"): {
                 String sql = "INSERT INTO art_users(uname, username, upartronymic, uemail, uhashedpassword, uadmin)  VALUES(?,?,?,?,?,?)";
@@ -41,6 +42,7 @@ public class SQL {
                     ps.setBoolean(6, Boolean.parseBoolean(elem.get(5)));
                     ps.executeUpdate();
                 }
+                break;
             }
             case ("избранное"): {
                 String sql = "INSERT INTO art_favorites(user_id, exhibit_id)  VALUES(?,?)";
@@ -49,6 +51,7 @@ public class SQL {
                     ps.setInt(2, Integer.parseInt(elem.get(1)));
                     ps.executeUpdate();
                 }
+                break;
             }
         }
     }
@@ -58,71 +61,78 @@ public class SQL {
         switch (table) {
             case ("экспонаты"): {
                 String sql = "DELETE from art_exhibits where id = ?";
-                String sql1 = "alter sequence art_exhibits_id_seq restart with ?";
-                try (PreparedStatement ps = conection.prepareStatement(sql)) {
+
+               try (PreparedStatement ps = conection.prepareStatement(sql)) {
                     ps.setInt(1, index);
                     ps.executeUpdate();
                 }
-                try (PreparedStatement ps = conection.prepareStatement(sql1)) {
-                    ps.setInt(1, index - 1);
-                    ps.executeUpdate();
-                }
+
+                break;
 
             }
             case ("пользователь"): {
                 String sql = "DELETE from art_users where id = ?";
-                String sql1 = "alter sequence art_users_id_seq restart with ?";
                 try (PreparedStatement ps = conection.prepareStatement(sql)) {
                     ps.setInt(1, index);
                     ps.executeUpdate();
                 }
-                try (PreparedStatement ps = conection.prepareStatement(sql1)) {
-                    ps.setInt(1, index - 1);
-                    ps.executeUpdate();
-                }
+                break;
             }
             case ("избранное"): {
                 String sql = "DELETE from art_users where id = ?";
-                String sql1 = "alter sequence art_favorites_id_seq restart with ?";
                 try (PreparedStatement ps = conection.prepareStatement(sql)) {
                     ps.setInt(1, index);
                     ps.executeUpdate();
                 }
-                try (PreparedStatement ps = conection.prepareStatement(sql1)) {
-                    ps.setInt(1, index - 1);
-                    ps.executeUpdate();
-                }
+                break;
             }
         }
 
     }
     public ArrayList<String> reading (int id,String s) throws SQLException {
-        String sql = "Select * from ? where id = ?";
         ArrayList<String> result = new ArrayList<>();
-        conection.createStatement();
-        try (PreparedStatement ps = conection.prepareStatement(sql)) {
-            ps.setString(1, s);
-            ps.setInt(2, id);
-            rs = ps.executeQuery();
-        }
-        switch (table){
+        switch (s){
             case ("экспонаты"):{
-                rs.next();
-                for(int i = 1; i<6;i++){
-                    result.add(rs.getString(i));
+                String sql = "Select * from art_exhibits where id = ?";
+                try (PreparedStatement ps = conection.prepareStatement(sql, rs.HOLD_CURSORS_OVER_COMMIT)) {
+                    ps.setInt(1, id);
+                    rs=ps.executeQuery();
+                    while (rs.next()){
+                        for (int i = 1; i < 7; i++) {
+                            result.add(rs.getString(i));
+                        }
+                    }
+                    rs.close();
                 }
+                break;
             }
             case ("пользователь"):{
-                rs.next();
-                for(int i = 1; i<7;i++){
-                    result.add(rs.getString(i));
+                String sql = "Select * from art_users where id = ?";
+                try (PreparedStatement ps = conection.prepareStatement(sql, rs.HOLD_CURSORS_OVER_COMMIT)) {
+                    ps.setInt(1, id);
+                    rs=ps.executeQuery();
+                    while (rs.next()){
+                        for (int i = 1; i < 8; i++) {
+                            result.add(rs.getString(i));
+                        }
+                    }
+                    rs.close();
                 }
+                break;
             }
             case ("избранное"):{
-                rs.next();
-                for(int i = 1; i<3;i++){
-                    result.add(rs.getString(i));
+                String sql = "Select * from art_favorites where id = ?";
+                try (PreparedStatement ps = conection.prepareStatement(sql, rs.HOLD_CURSORS_OVER_COMMIT)) {
+                    ps.setInt(1, id);
+                    rs=ps.executeQuery();
+                    while (rs.next()){
+                        for (int i = 1; i < 4; i++) {
+                            result.add(rs.getString(i));
+                        }
+                    }
+                    rs.close();
                 }
+                break;
             }
         }
         return result;
