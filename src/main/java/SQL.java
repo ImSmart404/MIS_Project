@@ -108,15 +108,24 @@ public class SQL {
         switch (table){
             case ("экспонаты"):{
                 rs.next();
-
+                for(int i = 1; i<6;i++){
+                    result.add(rs.getString(i));
+                }
             }
             case ("пользователь"):{
-
+                rs.next();
+                for(int i = 1; i<7;i++){
+                    result.add(rs.getString(i));
+                }
             }
             case ("избранное"):{
-
+                rs.next();
+                for(int i = 1; i<3;i++){
+                    result.add(rs.getString(i));
+                }
             }
         }
+        return result;
     }
 }
 
