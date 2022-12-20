@@ -17,11 +17,11 @@ public class SQL {
         this.statement = statement;
 
     }
-    public void add() throws SQLException {
+    public void add(ArrayList<String> elem) throws SQLException {
         conection.createStatement();
         switch (table){
             case ("art_exhibits"):{
-                String sql = "INSERT INTO art_exhibits(id,ename, edescription, eyear, ephoto, evideo) " + "VALUES(5,'Постоянство памяти','Одна из самых известных картин художника Сальвадора Дали.','1931','https://losko.ru/wp-content/uploads/2019/11/ebd7ff7f9d8ddb7b9a8502168187.jpg','https://www.youtube.com/watch?v=hi0sujvzt8s');";
+                String sql = "INSERT INTO art_exhibits(id,ename, edescription, eyear, ephoto, evideo)" + "VALUES(5,'Постоянство памяти','Одна из самых известных картин художника Сальвадора Дали.','1931','https://losko.ru/wp-content/uploads/2019/11/ebd7ff7f9d8ddb7b9a8502168187.jpg','https://www.youtube.com/watch?v=hi0sujvzt8s');";
                 statement.executeUpdate(sql);
             }
             case ("art_users"):{
