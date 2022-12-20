@@ -13,7 +13,6 @@ public class Main {
         Connect cn = new Connect(URL, USER, PASSWORD);
         cn.connect();
         Connection connection = cn.getConnection();
-        //SQL sql = new SQL();
         cn.closeConnect();
     }
     public ArrayList<String> addlist() throws SQLException {

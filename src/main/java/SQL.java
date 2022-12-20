@@ -1,6 +1,4 @@
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -9,45 +7,116 @@ public class SQL {
     private ArrayList<String> elem;
 
     private Connection conection;
-    private Statement statement;
-    public SQL(String table, ArrayList<String> elem, Connection conection, Statement statement){
+    private static ResultSet rs;
+
+    public SQL(String table, ArrayList<String> elem, Connection conection) {
         this.table = table;
         this.elem = elem;
         this.conection = conection;
-        this.statement = statement;
 
     }
+
     public void add(ArrayList<String> elem) throws SQLException {
         conection.createStatement();
-        switch (table){
-            case ("art_exhibits"):{
-                String sql = "INSERT INTO art_exhibits(id,ename, edescription, eyear, ephoto, evideo)" + "VALUES(5,'Постоянство памяти','Одна из самых известных картин художника Сальвадора Дали.','1931','https://losko.ru/wp-content/uploads/2019/11/ebd7ff7f9d8ddb7b9a8502168187.jpg','https://www.youtube.com/watch?v=hi0sujvzt8s');";
-                statement.executeUpdate(sql);
+        switch (table) {
+            case ("экспонаты"): {
+                String sql = "INSERT INTO art_exhibits(ename, edescription, eyear, ephoto, evideo)  VALUES(?,?,?,?,?)";
+                try (PreparedStatement ps = conection.prepareStatement(sql)) {
+                    ps.setString(1, elem.get(0));
+                    ps.setString(2, elem.get(1));
+                    ps.setInt(3, Integer.parseInt(elem.get(2)));
+                    ps.setString(4, elem.get(3));
+                    ps.setString(5, elem.get(4));
+                    ps.executeUpdate();
+                }
             }
-            case ("art_users"):{
-                String sql = "INSERT INTO art_users() " + "VALUES('','','','','','');";
-                statement.executeUpdate(sql);
+            case ("пользователь"): {
+                String sql = "INSERT INTO art_users(uname, usurename, upartronymic, uemail, uhashedpassword, uadmin)  VALUES(?,?,?,?,?,?)";
+                try (PreparedStatement ps = conection.prepareStatement(sql)) {
+                    ps.setString(1, elem.get(0));
+                    ps.setString(2, elem.get(1));
+                    ps.setString(3, elem.get(2));
+                    ps.setString(4, elem.get(3));
+                    ps.setString(5, elem.get(4));
+                    ps.setBoolean(6, Boolean.parseBoolean(elem.get(5)));
+                    ps.executeUpdate();
+                }
+            }
+            case ("избранное"): {
+                String sql = "INSERT INTO art_favorites(user_id, exhibit_id)  VALUES(?,?)";
+                try (PreparedStatement ps = conection.prepareStatement(sql)) {
+                    ps.setInt(1, Integer.parseInt(elem.get(0)));
+                    ps.setInt(2, Integer.parseInt(elem.get(1)));
+                    ps.executeUpdate();
+                }
             }
         }
     }
-    public void delete() throws SQLException {
+
+    public void delete(int index) throws SQLException {
         conection.createStatement();
-        switch (table){
-            case ("art_exhibits"):{
-                String sql = "DELETE from art_exhibits where id = 8";
-                statement.executeUpdate(sql);
+        switch (table) {
+            case ("экспонаты"): {
+                String sql = "DELETE from art_exhibits where id = ?";
+                String sql1 = "alter sequence art_exhibits_id_seq restart with ?";
+                try (PreparedStatement ps = conection.prepareStatement(sql)) {
+                    ps.setInt(1, index);
+                    ps.executeUpdate();
+                }
+                try (PreparedStatement ps = conection.prepareStatement(sql1)) {
+                    ps.setInt(1, index - 1);
+                    ps.executeUpdate();
+                }
+
             }
-            case ("art_users"):{
-                String sql = "DELETE from art_users where id = 8";
-                statement.executeUpdate(sql);
+            case ("пользователь"): {
+                String sql = "DELETE from art_users where id = ?";
+                String sql1 = "alter sequence art_users_id_seq restart with ?";
+                try (PreparedStatement ps = conection.prepareStatement(sql)) {
+                    ps.setInt(1, index);
+                    ps.executeUpdate();
+                }
+                try (PreparedStatement ps = conection.prepareStatement(sql1)) {
+                    ps.setInt(1, index - 1);
+                    ps.executeUpdate();
+                }
+            }
+            case ("избранное"): {
+                String sql = "DELETE from art_users where id = ?";
+                String sql1 = "alter sequence art_favorites_id_seq restart with ?";
+                try (PreparedStatement ps = conection.prepareStatement(sql)) {
+                    ps.setInt(1, index);
+                    ps.executeUpdate();
+                }
+                try (PreparedStatement ps = conection.prepareStatement(sql1)) {
+                    ps.setInt(1, index - 1);
+                    ps.executeUpdate();
+                }
             }
         }
+
     }
-    public void reading(ArrayList<String> elem){
-        String request = null;
-        Scanner sc = new Scanner(System.in);
-        if (sc.hasNextLine()) request = sc.nextLine();
-        else System.out.println("Поле пустое");
-        elem.add(request);
+    public ArrayList<String> reading (int id,String s) throws SQLException {
+        String sql = "Select * from ? where id = ?";
+        ArrayList<String> result = new ArrayList<>();
+        conection.createStatement();
+        try (PreparedStatement ps = conection.prepareStatement(sql)) {
+            ps.setString(1, s);
+            ps.setInt(2, id);
+            rs = ps.executeQuery();
+        }
+        switch (table){
+            case ("экспонаты"):{
+                rs.next();
+
+            }
+            case ("пользователь"):{
+
+            }
+            case ("избранное"):{
+
+            }
+        }
     }
 }
+
