@@ -31,7 +31,7 @@ public class SQL {
                 }
             }
             case ("пользователь"): {
-                String sql = "INSERT INTO art_users(uname, usurename, upartronymic, uemail, uhashedpassword, uadmin)  VALUES(?,?,?,?,?,?)";
+                String sql = "INSERT INTO art_users(uname, username, upartronymic, uemail, uhashedpassword, uadmin)  VALUES(?,?,?,?,?,?)";
                 try (PreparedStatement ps = conection.prepareStatement(sql)) {
                     ps.setString(1, elem.get(0));
                     ps.setString(2, elem.get(1));
@@ -117,6 +117,7 @@ public class SQL {
 
             }
         }
+        return result;
     }
 }
 
