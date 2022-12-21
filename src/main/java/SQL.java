@@ -79,7 +79,7 @@ public class SQL {
                 break;
             }
             case ("избранное"): {
-                String sql = "DELETE from art_users where id = ?";
+                String sql = "DELETE from art_favorites where id = ? ";
                 try (PreparedStatement ps = conection.prepareStatement(sql)) {
                     ps.setInt(1, index);
                     ps.executeUpdate();
